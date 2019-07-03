@@ -237,6 +237,7 @@ Here is the code for our "simple" library.
 
 At this point, you can compile "SimpleLib". You'll run these commands.
 
+    cd SimpleLib
     perl Makefile.PL
     make
     make bin
