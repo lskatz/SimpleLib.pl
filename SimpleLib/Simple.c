@@ -1,4 +1,4 @@
-#include "Simple.H"
+#include "Simple.h"
 #include <string>
 
 Simple::Simple(int myArg) {

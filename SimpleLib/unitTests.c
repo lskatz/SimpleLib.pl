@@ -1,4 +1,4 @@
-#include "Simple.H"
+#include "Simple.h"
 #include <iostream>
 #include <string>
 
