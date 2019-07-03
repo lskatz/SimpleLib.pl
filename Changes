@@ -1,0 +1,6 @@
+Revision history for Perl extension SimpleTest.
+
+0.01  Wed Jul  3 08:40:00 2019
+	- original version; created by h2xs 1.23 with options
+		-A -n SimpleTest
+
