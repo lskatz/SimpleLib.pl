@@ -259,7 +259,7 @@ Before I go any further, lets look at the Makefile.PL as it is key to all of our
 
 3. It is important your version of Perl was compiled with the same architecture (perl -v will tell you this).
 
-4. A great resource on make is available here: Makefile Tutorial
+4. A great resource on make is available here: [Makefile Tutorial](http://www.cprogramming.com/tutorial/makefiles.html)
 
 Ok. Great, now we have a shared library built, and trust that it actually is capable of doing something when told to (via the unitTests binary). Now let's hook this up to Perl.
 
