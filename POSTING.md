@@ -1,6 +1,6 @@
 # The posting
 
-This post was found at https://www.perlmonks.org/?node\_id=853194 and I wanted to save it for posterity here.
+This post was found at https://www.perlmonks.org/?node_id=853194 and I wanted to save it for posterity here.
 
 ## Preface
 
@@ -28,7 +28,7 @@ If I could change it, I'd just get rid of all the extra stuff, and make more roo
 
 _Thus begun my internet search._
 
-I started at Perlmonks. Queries concerning: "XS C++" and "XS external library" were fruitless for the most part. http://perlmonks.org/?node\_id=517931 .. tye, had the most impressive response (yes, I upvoted him), but it only dealt with C++ loaded directly in the XS file, and with "char's".
+I started at Perlmonks. Queries concerning: "XS C++" and "XS external library" were fruitless for the most part. http://perlmonks.org/?node_id=517931 .. tye, had the most impressive response (yes, I upvoted him), but it only dealt with C++ loaded directly in the XS file, and with "char's".
 
 Then I hit the chatterbox. tye of course was online, being the helpful guy he is held an amazing amount of patience with me as I slowly answered my questions. He did his absolute best to steer me away from XS entirely, and to use SWIG or Inline::C++ instead. But my position was simple, I didn't see any of the "awesome" libraries on CPAN resorting to this, why should I? Why is this so damn hard? Why is it so poorly documented? Why do I have a book on the subject that I paid 50$ for and I still have no clue how to accomplish such simple tasks? tye sensed my frusrtration, and kept pressing for alternatives. It was at this point I decided that I'd play the "Picard" card with XS.
 
@@ -153,46 +153,31 @@ Here is the code for our "simple" library.
 
     ( $CC, $Verbose ) = ( 'g++', 1 ); # define g++ as your CPP compiler
     WriteMakefile(
-            NAME    => 'Simple::SimpleLib', # the name of the library we'r
-    +e building
+            NAME    => 'Simple::SimpleLib', # the name of the library we're building
             SKIP    => [qw(all static static_lib dynamic dynamic_lib)],
-            clean   => {'FILES' => 'libSimpleLib$(LIB_EXT) unitTests'}, # 
-    +when you run make clean, it'll delete the shared library and the bina
-    +ry too.
+            clean   => {'FILES' => 'libSimpleLib$(LIB_EXT) unitTests'}, # when you run make clean, it'll delete the shared library and the binary too.
             CC      => $CC, # Our CPP compiler
             LD      => '$(CC)',
-            CCFLAGS => '-fPIC', # this instructs the CPP compiler to use "
-    +Position independence", basically a shared library, more details here
-                                # http://www.fpx.de/fp/Software/tcl-c++/tc
-    +l-c++.html
+            CCFLAGS => '-fPIC', # this instructs the CPP compiler to use "Position independence", basically a shared library, more details here
+                                # http://www.fpx.de/fp/Software/tcl-c++/tcl-c++.html
     );
 
-    # Ok, this "MY::top_targets" command isn't even mentioned in the pod f
-    +or ExtUtils::MakeMaker.
-    # Just understand that it is a method that allows you to modify the ta
-    +rgets that the makefile will build.
+    # Ok, this "MY::top_targets" command isn't even mentioned in the pod for ExtUtils::MakeMaker.
+    # Just understand that it is a method that allows you to modify the targets that the makefile will build.
     # (when you type just "make", you're really invoking "make all").
-    # You can see that "all" points to static, which points to libSimpleLi
-    +b.a, which actually does the real work.
-    # O_FILES refers to the object files that are created when the ".c" fi
-    +les are compiled.
+    # You can see that "all" points to static, which points to libSimpleLib.a, which actually does the real work.
+    # O_FILES refers to the object files that are created when the ".c" files are compiled.
 
     # You can see what is going on here when you actually run "make"
 
-    # g++ -c   -fPIC -O2 -march=nocona -mmmx -msse -msse2 -msse3   -DVERSI
-    +ON=\"\" -DXS_VERSION=\"\" Simple.C
-    # g++ -c   -fPIC -O2 -march=nocona -mmmx -msse -msse2 -msse3   -DVERSI
-    +ON=\"\" -DXS_VERSION=\"\" unitTests.C
+    # g++ -c   -fPIC -O2 -march=nocona -mmmx -msse -msse2 -msse3   -DVERSION=\"\" -DXS_VERSION=\"\" Simple.C
+    # g++ -c   -fPIC -O2 -march=nocona -mmmx -msse -msse2 -msse3   -DVERSION=\"\" -DXS_VERSION=\"\" unitTests.C
     # ar cr libSimpleLib.a Simple.o unitTests.o
     # : libSimpleLib.a
 
-    # "ar" is an archiving program that takes object files and packages th
-    +em into archives.  It reminds me a lot of tar, except minus the raw d
-    +evice related stuff.
+    # "ar" is an archiving program that takes object files and packages them into archives.  It reminds me a lot of tar, except minus the raw device related stuff.
 
-    # When you run "make bin" it takes the object files created when we ra
-    +n "make" and links them to create the binary unitTests (since unitTes
-    +ts has a "main" function defined).
+    # When you run "make bin" it takes the object files created when we ran "make" and links them to create the binary unitTests (since unitTests has a "main" function defined).
 
     # g++ Simple.o unitTests.o -o unitTests
 
@@ -293,16 +278,13 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
         CC                => $CC,
         LD                => '$(CC)',
         ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-          (ABSTRACT_FROM  => 'lib/Simple.pm', # retrieve abstract from mod
-    +ule
+          (ABSTRACT_FROM  => 'lib/Simple.pm', # retrieve abstract from module
            AUTHOR         => 'dextius <dextius@blahblah.com>') : ()),
         LIBS              => [''], # e.g., '-lm'
         DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
         INC               => '-I.', # e.g., '-I. -I/usr/include/other'
-        # OBJECT            => '$(O_FILES)', # link all the C files too # 
-    +Un-comment this if you add C files to link with later:
-        # target the shared library we just created "MYEXTLIB" tells make 
-    +to use this shared library.
+        # OBJECT            => '$(O_FILES)', # link all the C files too # Un-comment this if you add C files to link with later:
+        # target the shared library we just created "MYEXTLIB" tells make to use this shared library.
         'MYEXTLIB' => 'SimpleLib/libSimpleLib$(LIB_EXT)',
     );
 
@@ -318,8 +300,7 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
 ### /SimpleTest/Simple.xs
 
     # Ahh now we are getting to the meat and potatoes of this monster.
-    # Most of this mess is generated by h2xs, but let's see what else we g
-    +ot.
+    # Most of this mess is generated by h2xs, but let's see what else we got.
 
     #include "EXTERN.h"
     #include "perl.h"
@@ -327,8 +308,7 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
 
     #include "ppport.h"
 
-    # This line being ABOVE the "MODULE =" line is critical, as everything
-    + above that line is treated as pure C++
+    # This line being ABOVE the "MODULE =" line is critical, as everything above that line is treated as pure C++
     # Anything below it is in XS macro land.
 
     #include "SimpleLib/Simple.h"
@@ -343,14 +323,12 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
     Simple::new( y )
             int y
 
-    # I have no idea how "SimplePtr" became a valid keyword, but somehow t
-    +he XS engine realizes that it is the return type of the constructor.
+    # I have no idea how "SimplePtr" became a valid keyword, but somehow the XS engine realizes that it is the return type of the constructor.
     # It's magic to me, for now.
 
     MODULE = Simple         PACKAGE = SimplePtr
 
-    # Here is some basic XS, the documentation on this is covered pretty w
-    +ell in "Extending and Embedding Perl", specifically chapters 2 and 6.
+    # Here is some basic XS, the documentation on this is covered pretty well in "Extending and Embedding Perl", specifically chapters 2 and 6.
 
     int
     Simple::add(x)
@@ -384,37 +362,27 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
     StringMap     T_STRING_MAP
     StringVector  T_STRING_VECTOR
 
-    # Ok, let's step through this one fragment at a time.  First we're goi
-    +ng to declare the "input" type
-    # (ie: an argument passed in from perl to C++) of T_STRING, which maps
-    + to the C++ STL type of std::string.
+    # Ok, let's step through this one fragment at a time.  First we're going to declare the "input" type
+    # (ie: an argument passed in from perl to C++) of T_STRING, which maps to the C++ STL type of std::string.
     #
-    # SvTYPE is a function that looks at an SV's type to determine if it's
-    + an ordinary SV.
-    # It's basically the XS version of "ref".  SVt_PV is a string.  But yo
-    +u should use SvROK (the other half of "ref")
-    # first, not sure why it's not.  If the string typemap receives someth
-    +ing that isn't one, it'll warn and return undef.
+    # SvTYPE is a function that looks at an SV's type to determine if it's an ordinary SV.
+    # It's basically the XS version of "ref".  SVt_PV is a string.  But you should use SvROK (the other half of "ref")
+    # first, not sure why it's not.  If the string typemap receives something that isn't one, it'll warn and return undef.
 
-    # SvCUR is a function that lets you interrogate the length of a scalar
-    +.
+    # SvCUR is a function that lets you interrogate the length of a scalar.
     # SvCUR has a friend named SvLEN that tells you how long it could be.
-    # If it's length is 0, warn and return undef (not always desired, but 
-    +for now it's fine.
+    # If it's length is 0, warn and return undef (not always desired, but for now it's fine.
 
     # The last line generates a string from the argument given.
     # "string" is the actual C++ class constructor.
-    # SvPV_nolen lets you extract the value of a scalar and coerce it as a
-    + char *,
-    # of unlimited length, because the C++ std::string constructor doesn't
-    + care, I think.
+    # SvPV_nolen lets you extract the value of a scalar and coerce it as a char *,
+    # of unlimited length, because the C++ std::string constructor doesn't care, I think.
 
     INPUT
     T_STRING
         {
             if (SvTYPE($arg) != SVt_PV) {
-                warn(\"${Package}::$func_name() -- $var is invalid svtype\
-    +");
+                warn(\"${Package}::$func_name() -- $var is invalid svtype\");
                 XSRETURN_UNDEF;
             }
             if (SvCUR($arg) == 0) {
@@ -424,46 +392,32 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
             $var = string(SvPV_nolen($arg));
         }
 
-    # Ok, this next section covers strings returned from C++ functions or 
-    +methods (hence the OUTPUT),
-    # that need to be transformed back into scalars for perl to deal with.
-    +  The "sv_setpvn" macro sets
+    # Ok, this next section covers strings returned from C++ functions or methods (hence the OUTPUT),
+    # that need to be transformed back into scalars for perl to deal with.  The "sv_setpvn" macro sets
     # the value of a scalar.
 
     OUTPUT
     T_STRING
         sv_setpvn($arg, $var.c_str(), $var.size());
 
-    # Now things get complicated, let's handle an "array reference" and tu
-    +rn it into a std::vector of std::string's
+    # Now things get complicated, let's handle an "array reference" and turn it into a std::vector of std::string's
     # and pass it into a C++ function or method, yee-hah..
     #
     # AV *av is a perl array.
     # I32 len is a 32 bit int. (why not just use int?)
-    # SvROK "is this a reference" sort of like ref, except it doesn't tell
-    + you which kind. (SvRV dereferences the reference)
+    # SvROK "is this a reference" sort of like ref, except it doesn't tell you which kind. (SvRV dereferences the reference)
     # SVt_PVAV is Perl's C structure for an Array.
-    # So, the entire line says, "if the argument is a perl array reference
-    +:"
-    # Dereference the arg, then downcast it to a pointer of an array type 
-    +(since we know it is one), assign that to our array type (av).
+    # So, the entire line says, "if the argument is a perl array reference:"
+    # Dereference the arg, then downcast it to a pointer of an array type (since we know it is one), assign that to our array type (av).
     # Assign the length of the arraa, using "av_len".
-    # We return undef if it's length is 0 (not sure why we couldn't return
-    + an empty list here, but whatever)
-    # The "else" handles the case when it's not handed an array reference 
-    +as an argument
+    # We return undef if it's length is 0 (not sure why we couldn't return an empty list here, but whatever)
+    # The "else" handles the case when it's not handed an array reference as an argument
     #
-    # Now for the guts.  Iterate over every element (the for loop)..Call t
-    +he vector's method "push_back".
-    # Create a new string, calling the scalar extraction SvPV_nolen, again
-    +st the dereferenced value of what av_fetch returned.
-    # It passes the array, the position, and a third argument detailing if
-    + Perl needs to auto extend the list
-    # (because you're about to write to that index position).  av_fetch re
-    +turns a pointer to a pointer to an SV, hence the deref'ing "*av_fetch
-    +".
-    # lastly, we need to assign the "$var" (what goes to C++ to t_sv, our 
-    +C++ StringVector, the header shows this is a std::vector<std::string>
+    # Now for the guts.  Iterate over every element (the for loop)..Call the vector's method "push_back".
+    # Create a new string, calling the scalar extraction SvPV_nolen, against the dereferenced value of what av_fetch returned.
+    # It passes the array, the position, and a third argument detailing if Perl needs to auto extend the list
+    # (because you're about to write to that index position).  av_fetch returns a pointer to a pointer to an SV, hence the deref'ing "*av_fetch".
+    # lastly, we need to assign the "$var" (what goes to C++ to t_sv, our C++ StringVector, the header shows this is a std::vector<std::string>
 
     INPUT
     T_STRING_VECTOR
@@ -475,14 +429,12 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
                 av  = (AV *)SvRV($arg);
                 len = av_len(av) + 1;
                 if(len == 0){
-                    warn(\"${Package}::$func_name() -- $var is empty array
-    + reference\");
+                    warn(\"${Package}::$func_name() -- $var is empty array reference\");
                     XSRETURN_UNDEF;
                 }
 
             } else {
-                warn(\"${Package}::$func_name() -- $var is not a array ref
-    +erence\");
+                warn(\"${Package}::$func_name() -- $var is not a array reference\");
                 XSRETURN_UNDEF;
             }
             for (I32 i = 0; i < len; i++) {
@@ -493,24 +445,16 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
 
     # Now for String vectors returned back to Perl
     # If it the C++ vector is empty, it returns undef back to perl
-    # Why is it when I see "sv_2mortal" I think about the intro to the Seg
-    +a game, "Altered Beast"... "Rise from your grave!"
-    # So many weirdly named keywords in Perl.  I love the language, maybe 
-    +even because of it's quirks.
+    # Why is it when I see "sv_2mortal" I think about the intro to the Sega game, "Altered Beast"... "Rise from your grave!"
+    # So many weirdly named keywords in Perl.  I love the language, maybe even because of it's quirks.
     #
-    # Anyway, we create a new Array.  (the rest is covered similarly on pa
-    +ge 124 of Extending and Embedding Perl).
+    # Anyway, we create a new Array.  (the rest is covered similarly on page 124 of Extending and Embedding Perl).
     #
-    # SvSetSV will COPY the data from one variable to another, unless they
-    +'re pointing to the same thing.
-    # newRV_noinc: This is the C/C++ equivalent of the "\" or reference op
-    +erator.  We have a list, we want to return it as an array reference.
-    # We don't increment because it needs to go out of scope when this blo
-    +ck finishes (we're copying to "arg" anyway, so the data lives on).
-    # Reading from inside out.  Take an array, cast it as a pointer to a s
-    +calar (what newRV_noinc requires).  Pass that to newRV_noinc to
-    # create a reference.  "arg" and this new reference value get sent to 
-    +SvSetSV to copy the contents of your new array ref to the outbound
+    # SvSetSV will COPY the data from one variable to another, unless they're pointing to the same thing.
+    # newRV_noinc: This is the C/C++ equivalent of the "\" or reference operator.  We have a list, we want to return it as an array reference.
+    # We don't increment because it needs to go out of scope when this block finishes (we're copying to "arg" anyway, so the data lives on).
+    # Reading from inside out.  Take an array, cast it as a pointer to a scalar (what newRV_noinc requires).  Pass that to newRV_noinc to
+    # create a reference.  "arg" and this new reference value get sent to SvSetSV to copy the contents of your new array ref to the outbound
     # "arg" structure.  Phew!
 
     OUTPUT
@@ -522,25 +466,21 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
             }
 
             AV *av = (AV *)sv_2mortal((SV *)newAV());
-            for(StringVectorIt it = $var.begin(); it != $var.end(); it++) 
-    +{
+            for(StringVectorIt it = $var.begin(); it != $var.end(); it++) {
                 av_push(av, newSVpvn(it->c_str(), it->size()));
             }
             SvSetSV($arg, newRV_noinc((SV *)av));
         }
 
-    # Now we need to look at hash referenecs passed as arguments to C++ fu
-    +nctions.
+    # Now we need to look at hash referenecs passed as arguments to C++ functions.
     # They'll transform into std::map<std::string, std::string>.
     # HV is a hash value
     # HE is a hash entry (a key)
     # Ok, we've seen most of this already.  So let's move quick.
     # If it's not a hash ref, the return undef (SVt_PVHV is a hash)
     # Next is the C side perl loop over the keys in a hash
-    # The key and value from the hash get forced into scalar values via He
-    +SVKEY_force and HeVAL.
-    # Those scalars are passed into the insert function of our StringMap (
-    +std::map<std::string, std::string>)
+    # The key and value from the hash get forced into scalar values via HeSVKEY_force and HeVAL.
+    # Those scalars are passed into the insert function of our StringMap (std::map<std::string, std::string>)
     # Assign the ingoing $var to the StringMap we've been inserting into!
 
     INPUT
@@ -552,43 +492,34 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
             if(SvROK($arg) && SvTYPE(SvRV($arg)) == SVt_PVHV) {
                 hv = (HV *)SvRV($arg);
                 if(hv_iterinit(hv) == 0) {
-                    warn(\"${Package}::$func_name() -- $var is empty hash 
-    +reference\");
+                    warn(\"${Package}::$func_name() -- $var is empty hash reference\");
                     XSRETURN_UNDEF;
                 }
             } else {
-                warn(\"${Package}::$func_name() -- $var is not a hash refe
-    +rence\");
+                warn(\"${Package}::$func_name() -- $var is not a hash reference\");
                 XSRETURN_UNDEF;
             }
 
             while((he = hv_iternext(hv)) != NULL) {
                 SV *svkey = HeSVKEY_force(he);
                 SV *svval = HeVAL(he);
-                t_sm.insert(StringMap::value_type(string(SvPV_nolen(svkey)
-    +), string(SvPV_nolen(svval))));
+                t_sm.insert(StringMap::value_type(string(SvPV_nolen(svkey)), string(SvPV_nolen(svval))));
             }
             $var = t_sm;
         }
 
-    # Lastly, deal with functions / methods that return StringMap's back t
-    +o Perl.
+    # Lastly, deal with functions / methods that return StringMap's back to Perl.
     # If it's empty, return undef..
-    # That crazy 'rise from the dead' thing again creating a Hash value th
-    +at will go out of scope and be freed after this block ends.
-    # Now it's basic C++ map looping.  hv_store only takes 5 arguments.  :
-    +:blink::
+    # That crazy 'rise from the dead' thing again creating a Hash value that will go out of scope and be freed after this block ends.
+    # Now it's basic C++ map looping.  hv_store only takes 5 arguments.  ::blink::
     #       The hash that you want insert into
     #       A const char* of the key
-    #       An I32 integer of the length of that char* key we just mention
-    +ed
+    #       An I32 integer of the length of that char* key we just mentioned
     #       A scalar that is to be the value of the key.
-    #       The hashing value (passing 0 will tell Perl to compute it for 
-    +you)
+    #       The hashing value (passing 0 will tell Perl to compute it for you)
     # it->first  is the key   of the current element in std::map
     # it->second is the value of the current element in std::map
-    # The value needs to be "wrapped" by the creation of a new scalar valu
-    +e, same as what we did when adding elements to an array
+    # The value needs to be "wrapped" by the creation of a new scalar value, same as what we did when adding elements to an array
 
     OUTPUT
     T_STRING_MAP
@@ -599,8 +530,7 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
             }
             HV *hv = (HV *)sv_2mortal((SV *)newHV());
             for(StringMapIt it = $var.begin(); it != $var.end(); it++) {
-                hv_store(hv, (it->first).c_str(), (it->first).size(), newS
-    +Vpvn((it->second).c_str(), (it->second).size()), 0);
+                hv_store(hv, (it->first).c_str(), (it->first).size(), newSVpvn((it->second).c_str(), (it->second).size()), 0);
             }
             SvSetSV($arg, newRV_noinc((SV *)hv));
         }
@@ -610,14 +540,13 @@ Ok. Great, now we have a shared library built, and trust that it actually is cap
 
 While I'm here, I ran to a bunch of other fun issues. Linking to Boost or ACE causes all kinds of wacky symbol collisions to fire off, but google was to the rescue, again. Simple add these few lines to your ".xs" file (immediately after #include "ppport.h")
 
-#undef init_tm
-#undef do_open
-#undef do_close
+    #undef init_tm
+    #undef do_open
+    #undef do_close
 
-#ifdef ENTER
-#undef ENTER
-#endif
-[download]
+    #ifdef ENTER
+    #undef ENTER
+    #endif
 
 Exceptions? So, my code throws exceptions. I cannot catch them, they cause Perl to blow up. I looked around, and eventually found the link above. It, like most of what I have learned about XS frightened me. I can see this is another "spend a week" researching on how other people have approached the problem, and then hack something of my own together, but hopefully someone will read this and tell me what the best approach is.
 
