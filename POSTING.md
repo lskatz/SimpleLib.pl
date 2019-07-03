@@ -262,7 +262,7 @@ Before I go any further, lets look at the Makefile.PL as it is key to all of our
 
 Ok. Great, now we have a shared library built, and trust that it actually is capable of doing something when told to (via the unitTests binary). Now let's hook this up to Perl.
 
-    /SimpleTest/Makefile.PL
+### /SimpleTest/Makefile.PL
 
     use 5.008003;
     use ExtUtils::MakeMaker;

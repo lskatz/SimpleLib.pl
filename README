@@ -31,10 +31,12 @@ COPYRIGHT AND LICENCE
 
 Put the correct copyright and licence information here.
 
-Copyright (C) 2019 by Lee Katz
+~~Copyright (C) 2019 by Lee Katz~~
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.16.1 or,
 at your option, any later version of Perl 5 you may have available.
 
+## Futher documentation
 
+Please see [POSTING.md](POSTING.md) for further documentation.
